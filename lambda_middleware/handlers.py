@@ -1,3 +1,6 @@
+import typing as t
+
+
 class MiddlewareStack:
     def __init__(self, event, context, handler, middlewares):
         self.event = event
@@ -17,13 +20,16 @@ class MiddlewareStack:
 
 
 class MiddlewareHandler:
-    def __init__(self, handler, middlewares):
+    def __init__(self, handler, middlewares: t.Optional[list] = None):
         self.handler = handler
-        self.middlewares = middlewares
+        self.middlewares = middlewares or []
 
     def __call__(self, event, context):
         middlewarestack = MiddlewareStack(event, context, self.handler, self.middlewares)
         return middlewarestack(event, context)
+    
+    def add_middleware(self, middleware):
+        self.middlewares.append(middleware)
 
 
 class RouterHandler:
